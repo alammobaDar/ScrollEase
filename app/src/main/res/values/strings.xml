@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ScrollEase</string>
+    <string name="app_description">A simple persistent notification</string>
+</resources>
