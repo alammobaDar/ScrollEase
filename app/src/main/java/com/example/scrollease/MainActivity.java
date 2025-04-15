@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +33,18 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        Button toOpenBottomSheet = findViewById(R.id.ToButtonFragment);
+        toOpenBottomSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetFragment bsf = new BottomSheetFragment();
+                bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
+            }
+        });
+
     }
+
+
 
     public void persistentNotification(View v) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

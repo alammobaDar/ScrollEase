@@ -9,6 +9,7 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="174dp"
         android:layout_height="71dp"
         android:text="ScrollEase"
@@ -21,29 +22,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.156" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="-30dp" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="168dp"
-        android:layout_height="103dp"
-        android:onClick="persistentNotification"
-        android:text="Start"
-        android:textAlignment="center"
-        android:textColorHighlight="#F03232"
-        android:textColorLink="#312929"
-        android:textDirection="locale"
-        android:textSize="20sp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="263dp"
+        android:layout_height="271dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.565" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="168dp"
+            android:layout_height="103dp"
+            android:onClick="persistentNotification"
+            android:text="Start"
+            android:textAlignment="center"
+            android:textColorHighlight="#F03232"
+            android:textColorLink="#312929"
+            android:textDirection="locale"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/ToButtonFragment"
+            android:layout_width="168dp"
+            android:layout_height="103dp"
+            android:text="Bottom Fragment"
+            android:textAlignment="center"
+            android:textColorHighlight="#F03232"
+            android:textColorLink="#312929"
+            android:textDirection="locale"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
