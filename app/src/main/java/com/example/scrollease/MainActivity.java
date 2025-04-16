@@ -3,6 +3,7 @@ package com.example.scrollease;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,8 +17,17 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
             }
         });
+
+        SRFPermission();
 
     }
 
@@ -74,6 +86,77 @@ public class MainActivity extends AppCompatActivity {
         NotificationManagerCompat notifyManager = NotificationManagerCompat.from(this);
         notifyManager.notify(1, builder.build());
 
+    }
+
+    public void SRFPermission(){
+        // this requests user's permission if the app can use the device's mic
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions
+                    (this,new String[]{Manifest.permission.RECORD_AUDIO},1);
+        }
+    }
+    public void SpeechRecognitionFeature(View v){
+
+        SpeechRecognizer speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        Intent intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+                Log.d("Speech", "Speech Ready!");
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                Log.d("Speech", "Speech Started");
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+                Log.d("Speech", "Sound level: " + rmsdB);
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+                Log.d("Speech", "Speech Finished");
+            }
+
+            @Override
+            public void onError(int error) {
+                SpeechRecognizerErrorHandler sreh = new SpeechRecognizerErrorHandler();
+                String errorMessage = sreh.getErrorText(error);
+                Log.e("Speech", "Error:" + errorMessage);
+                Toast.makeText(getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (matches != null && !matches.isEmpty()){
+                    String spokenText = matches.get(0);
+                    Log.d("Speech", "Result:" + spokenText);
+
+                }
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+        });
     }
 
 }
