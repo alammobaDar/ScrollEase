@@ -38,7 +38,7 @@
             android:onClick="persistentNotification"
             android:text="Start"
             android:textAlignment="center"
-            android:textColorHighlight="#F03232"
+            android:textColorHighlight="#F05232"
             android:textColorLink="#312929"
             android:textDirection="locale"
             android:textSize="20sp"

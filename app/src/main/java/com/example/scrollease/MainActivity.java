@@ -29,7 +29,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomSheetFragment.SpeechRecognitionInterface{
 
     public static final String CHANNEL_ID =  "Darren_id";
     @Override
@@ -97,7 +97,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void SpeechRecognitionFeature(View v){
+        startSpeechRecognition();
 
+    }
+
+    @Override
+    public void startSpeechRecognition() {
         SpeechRecognizer speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         Intent intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -157,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
 
+        speechRecognizer.startListening(intent);
+    }
 }

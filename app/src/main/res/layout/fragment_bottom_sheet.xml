@@ -21,7 +21,6 @@
     <Button
         android:id="@+id/SpeechRecognition"
         android:layout_width="fill_parent"
-        android:onClick="SpeechRecognitionFeature"
         android:layout_height="wrap_content"
         android:text="Start Speech"/>
 
