@@ -1,6 +1,7 @@
 package com.example.scrollease;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
@@ -44,6 +45,14 @@ public class MainActivity extends AppCompatActivity implements BottomSheetFragme
 
         NotificationFeature nf = new NotificationFeature();
         nf.SRFPermission(this);
+
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) Button notifButton = findViewById(R.id.notification_button);
+        notifButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nf.persistentNotification(MainActivity.this, v);
+            }
+        });
 
     }
 

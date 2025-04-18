@@ -9,6 +9,8 @@ import android.os.Build;
 import android.view.View;
 import androidx.annotation.NonNull;
 import android.content.Context;
+import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -16,11 +18,16 @@ import androidx.core.content.ContextCompat;
 
 public class NotificationFeature {
     public static final String CHANNEL_ID =  "Darren_id";
-    public void persistentNotification(@NonNull Context context,View v) {
+    public void persistentNotification(@NonNull Context context, View v) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                if (context instanceof Activity){
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                }
+                else {
+                    Toast.makeText(v.getContext(), "Context is not an Activity", Toast.LENGTH_SHORT).show();
+                }
             }
 
             CharSequence name = context.getString(R.string.app_name);
