@@ -32,13 +32,12 @@
         app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/notification_button"
             android:layout_width="168dp"
             android:layout_height="103dp"
-            android:onClick="persistentNotification"
             android:text="Start"
             android:textAlignment="center"
-            android:textColorHighlight="#F03232"
+            android:textColorHighlight="#F05232"
             android:textColorLink="#312929"
             android:textDirection="locale"
             android:textSize="20sp"
