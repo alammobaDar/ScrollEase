@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements BottomSheetFragme
                 if (matches != null && !matches.isEmpty()){
                     String spokenText = matches.get(0);
                     Log.d("Speech", "Result:" + spokenText);
-
+                    Toast.makeText(getApplicationContext(), spokenText, Toast.LENGTH_SHORT).show();
                 }
             }
 
