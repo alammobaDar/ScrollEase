@@ -2,23 +2,15 @@ package com.example.scrollease;
 
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements BottomSheetFragment.SpeechRecognitionInterface{
@@ -39,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements BottomSheetFragme
         toOpenBottomSheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheetFragment bsf = new BottomSheetFragment();
+                BottomSheetFragment bsf = new BottomSheetFragment   ();
                 bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
             }
         });
