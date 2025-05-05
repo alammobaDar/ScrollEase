@@ -2,66 +2,72 @@ package com.example.scrollease;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.scrollease.databinding.FragmentBottomSheetBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment {
+public class BottomSheetFragment extends BottomSheetDialogFragment implements SpeechRecognitionFeature.SpeechResultListener {
 
-    public interface SpeechRecognitionInterface{
+    @Override
+    public void onResults(String results) {
+    }
+
+    @Override
+    public void onPartialResults(String partialResults) {
+        if (getActivity() != null){
+            getActivity().runOnUiThread(() ->
+                    binding.textDisplay.setText(partialResults));
+        }
+    }
+
+    // TODO: The SpeechRecognition Don't work because the SpeechRecognitionInterface don't work because it is not connected to SpeechRecognitionFeature.
+    public interface SpeechRecognitionInterface {
         void startSpeechRecognition();
     }
 
     private SpeechRecognitionInterface listener;
+    private FragmentBottomSheetBinding binding;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
             listener = (SpeechRecognitionInterface) context;
-        }catch (ClassCastException e ){
-            throw new ClassCastException(context.toString() +
-                    "must implement SpeechRecognitionInterface");
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context + " must implement SpeechRecognitionInterface");
         }
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_bottom_sheet, container, false);
-        Button bottomSheetButton = view.findViewById(R.id.BottomFragment);
-        bottomSheetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Scroll Ease", Toast.LENGTH_SHORT).show();
-                dismiss();
-            }
-        });
-
-        Button speechButton = view.findViewById(R.id.SpeechRecognition);
-        speechButton.setOnClickListener(v -> {
-            if (listener != null){
-                listener.startSpeechRecognition();
-                Log.d("Speech","Clicked");
-            }
-        });
-//        SpeechRecognitionFeature srf = new SpeechRecognitionFeature(view.getContext());
-
-//        TextView displayText = view.findViewById(R.id.textDisplay);
-////        displayText.setText(srf.getText());
-        return view;
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentBottomSheetBinding.inflate(inflater, container, false);
+        setupClickListeners();
+        return binding.getRoot();
     }
 
+    private void setupClickListeners() {
+        binding.backButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Scroll Ease", Toast.LENGTH_SHORT).show();
+            dismiss();
+        });
+
+        binding.SpeechRecognitionButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.startSpeechRecognition();
+                Log.d("Speech", "Clicked");
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // Prevent memory leaks
+    }
 }

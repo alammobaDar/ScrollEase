@@ -30,13 +30,13 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/SpeechRecognition"
+        android:id="@+id/SpeechRecognitionButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Start Speech"/>
 
     <Button
-        android:id="@+id/BottomFragment"
+        android:id="@+id/backButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Back" />

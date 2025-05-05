@@ -14,20 +14,24 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SpeechRecognitionFeature implements BottomSheetFragment.SpeechRecognitionInterface{
+public class SpeechRecognitionFeature{
 
     private Context context;
     private SpeechRecognizer speechRecognizer;
     private Intent intent;
     private final String TRIGGER_WORD = "config";
     private boolean isListening = false;
-    private final TextView textView;
 
-    public SpeechRecognitionFeature(Context context, TextView textView){
-        this.context = context;
-        this.textView = textView;
+    public interface SpeechResultListener{
+        void onResults(String results);
+        void onPartialResults(String results);
     }
-    @Override
+    SpeechResultListener resultListener;
+    public SpeechRecognitionFeature(Context context, SpeechResultListener resultListener){
+        this.context = context.getApplicationContext();
+        this.resultListener = resultListener;
+    }
+
     public void startSpeechRecognition() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this.context);
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -102,7 +106,9 @@ public class SpeechRecognitionFeature implements BottomSheetFragment.SpeechRecog
                     String partialSpokenText = match.get(0).toLowerCase();
 
                     if(partialSpokenText.toLowerCase().contains(TRIGGER_WORD.toLowerCase())){
-                        textView.post(() -> textView.setText(partialSpokenText));
+                        if (resultListener != null){
+                            resultListener.onPartialResults(partialSpokenText);
+                        }
                     }
                 }
 

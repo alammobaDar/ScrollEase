@@ -1,62 +1,57 @@
 package com.example.scrollease;
 
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.view.View;
-import android.widget.Button;
 
+import com.example.scrollease.databinding.ActivityMainBinding;
 
+public class MainActivity extends AppCompatActivity implements BottomSheetFragment.SpeechRecognitionInterface {
 
-public class MainActivity extends AppCompatActivity implements BottomSheetFragment.SpeechRecognitionInterface{
+    private ActivityMainBinding binding;
+    private SpeechRecognitionFeature speechRecognitionFeature;
 
-    SpeechRecognitionFeature speechRecognitionFeature;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        Button toOpenBottomSheet = findViewById(R.id.ToButtonFragment);
-        toOpenBottomSheet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomSheetFragment bsf = new BottomSheetFragment   ();
-                bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
-            }
+        // Replace findViewById with binding
+        binding.ToButtonFragment.setOnClickListener(v -> {
+            BottomSheetFragment bsf = new BottomSheetFragment();
+            bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
         });
 
         NotificationFeature nf = new NotificationFeature();
         nf.SRFPermission(this);
 
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) Button notifButton = findViewById(R.id.notification_button);
-        notifButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nf.persistentNotification(MainActivity.this, v);
-            }
-        });
-        speechRecognitionFeature = new SpeechRecognitionFeature(this);
-
+        binding.notificationButton.setOnClickListener(v ->
+                nf.persistentNotification(MainActivity.this, v)
+        );
     }
 
     @Override
     public void startSpeechRecognition() {
-        if(speechRecognitionFeature != null){
+        if (speechRecognitionFeature != null) {
             speechRecognitionFeature.startSpeechRecognition();
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null; // Cleanup
+    }
 
 }
