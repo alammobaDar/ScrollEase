@@ -18,27 +18,27 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Sp
     public void onResults(String results) {
     }
 
+    // TODO: The partial text is not being past on overrided onPartialResults
     @Override
     public void onPartialResults(String partialResults) {
+        Log.d("Speech", "partial "+ partialResults);
         if (getActivity() != null){
+
             getActivity().runOnUiThread(() ->
                     binding.textDisplay.setText(partialResults));
         }
     }
 
-    // TODO: The SpeechRecognition Don't work because the SpeechRecognitionInterface don't work because it is not connected to SpeechRecognitionFeature.
-    public interface SpeechRecognitionInterface {
-        void startSpeechRecognition();
-    }
 
-    private SpeechRecognitionInterface listener;
+    private SpeechRecognitionFeature.SpeechRecognitionInterface listener;
+
     private FragmentBottomSheetBinding binding;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (SpeechRecognitionInterface) context;
+            listener = (SpeechRecognitionFeature.SpeechRecognitionInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context + " must implement SpeechRecognitionInterface");
         }

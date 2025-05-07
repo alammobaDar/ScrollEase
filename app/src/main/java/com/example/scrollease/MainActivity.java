@@ -9,10 +9,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.scrollease.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity implements BottomSheetFragment.SpeechRecognitionInterface {
+public class MainActivity extends AppCompatActivity implements SpeechRecognitionFeature.SpeechRecognitionInterface {
 
     private ActivityMainBinding binding;
     private SpeechRecognitionFeature speechRecognitionFeature;
+
+    private BottomSheetFragment bottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements BottomSheetFragme
         binding.notificationButton.setOnClickListener(v ->
                 nf.persistentNotification(MainActivity.this, v)
         );
+
+        speechRecognitionFeature = new SpeechRecognitionFeature(this, null);
     }
 
     @Override
@@ -48,9 +52,14 @@ public class MainActivity extends AppCompatActivity implements BottomSheetFragme
         }
     }
 
+    public void setSpeechRecognitionListener(SpeechRecognitionFeature.SpeechResultListener listener){
+        speechRecognitionFeature.resultListener = listener;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         binding = null; // Cleanup
     }
 
