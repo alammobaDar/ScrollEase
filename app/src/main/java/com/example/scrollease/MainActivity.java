@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
                 nf.persistentNotification(MainActivity.this, v)
         );
 
-        speechRecognitionFeature = new SpeechRecognitionFeature(this, null);
+        bottomSheetFragment = new BottomSheetFragment();
+        speechRecognitionFeature = new SpeechRecognitionFeature(this, bottomSheetFragment);
+
     }
 
     @Override

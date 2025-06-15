@@ -30,6 +30,7 @@ public class SpeechRecognitionFeature{
         void onResults(String results);
         void onPartialResults(String results);
     }
+
     SpeechResultListener resultListener;
     public SpeechRecognitionFeature(Context context, SpeechResultListener resultListener){
         this.context = context.getApplicationContext();
@@ -119,9 +120,10 @@ public class SpeechRecognitionFeature{
 //                        }
 //                    }
                     Log.d("Speech", partialSpokenText);
-                    if (resultListener != null){
-                        resultListener.onPartialResults(partialSpokenText);
-                    }
+                    resultListener.onPartialResults(partialSpokenText);
+//                    if (resultListener != null){
+//                        resultListener.onPartialResults(partialSpokenText);
+//                    }
                 }
 
             }

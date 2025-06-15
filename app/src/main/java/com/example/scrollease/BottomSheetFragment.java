@@ -18,14 +18,13 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Sp
     public void onResults(String results) {
     }
 
-    // TODO: The partial text is not being past on overrided onPartialResults
+
     @Override
     public void onPartialResults(String partialResults) {
-        Log.d("Speech", "partial "+ partialResults);
         if (getActivity() != null){
-
             getActivity().runOnUiThread(() ->
                     binding.textDisplay.setText(partialResults));
+            Log.d("Speech", "partial "+ partialResults);
         }
     }
 
