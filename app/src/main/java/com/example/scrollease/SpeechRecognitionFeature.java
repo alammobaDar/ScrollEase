@@ -4,69 +4,65 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.Service;
+
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SpeechRecognitionFeature{
+import com.example.scrollease.NotificationFeature;
 
-    private Context context;
+public class SpeechRecognitionFeature extends Service{
+
+    Context context;
     private SpeechRecognizer speechRecognizer;
     private Intent intent;
     private final String TRIGGER_WORD = "config";
     private boolean isListening = false;
+    NotificationFeature notificationFeature = new NotificationFeature();
 
-    public interface SpeechRecognitionInterface {
-        void startSpeechRecognition();
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
-    public interface SpeechResultListener{
-        void onResults(String results);
-        void onPartialResults(String results);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId){
+        startForeground(1, notificationFeature.persistentNotification(this));
+        return START_STICKY;
     }
-    SpeechResultListener resultListener;
-    public SpeechRecognitionFeature(Context context, SpeechResultListener resultListener){
-        this.context = context.getApplicationContext();
-        this.resultListener = resultListener;
-    }
-
+    // TODO: Add onCreate for lifecycle
     public void startSpeechRecognition() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this.context);
-        intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
-            public void onReadyForSpeech(Bundle params) {
-                Log.d("Speech", "Speech Ready!");
-                isListening = true;
-            }
+            public void onReadyForSpeech(Bundle params) {}
 
             @Override
-            public void onBeginningOfSpeech() {
-                Log.d("Speech", "Speech Started");
-            }
+            public void onBeginningOfSpeech() {}
 
             @Override
-            public void onRmsChanged(float rmsdB) {
-//                Log.d("Speech", "Sound level: " + rmsdB);
-            }
+            public void onRmsChanged(float rmsdB) {}
 
             @Override
             public void onBufferReceived(byte[] buffer) {}
 
             @Override
-            public void onEndOfSpeech() {
-                Log.d("Speech", "Speech Finished");
-            }
+            public void onEndOfSpeech() {}
 
             @Override
             public void onError(int error) {
@@ -75,8 +71,6 @@ public class SpeechRecognitionFeature{
                 Log.e("Speech", "Error:" + errorMessage);
                 Toast.makeText(context.getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
 
-//                isListening = false;
-//                new Handler().postDelayed(() -> startListening(), 300);
             }
 
             @Override
@@ -86,24 +80,19 @@ public class SpeechRecognitionFeature{
                     String spokenText = matches.get(0);
                     Log.d("Speech", "Result:" + spokenText);
 
-                    if (spokenText != null){
-//                        if(spokenText.toLowerCase().contains(TRIGGER_WORD.toLowerCase())){
-//                            String command = extractCommand(spokenText);
-//                            Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        else {
-//                            Log.d("Speech", "No trigger word found in: " + spokenText);
-//                        }
-                        String command = extractCommand(spokenText);
-                        Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
-                    }
+//                    if (spokenText != null){
+////                        if(spokenText.toLowerCase().contains(TRIGGER_WORD.toLowerCase())){
+////                            String command = extractCommand(spokenText);
+////                            Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
+////                        }
+////
+////                        else {
+////                            Log.d("Speech", "No trigger word found in: " + spokenText);
+////                        }
+//                        String command = extractCommand(spokenText);
+//                        Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
+//                    }
                 }
-
-//                startListening();
-//
-//                isListening = false;
-//                new Handler().postDelayed(() -> startListening(), 300);
 
             }
 
@@ -113,15 +102,10 @@ public class SpeechRecognitionFeature{
                 if (match != null && !match.isEmpty()){
                     String partialSpokenText = match.get(0).toLowerCase();
 
-//                    if(partialSpokenText.toLowerCase().contains(TRIGGER_WORD.toLowerCase())){
-//                        if (resultListener != null){
-//                            resultListener.onPartialResults(partialSpokenText);
-//                        }
-//                    }
                     Log.d("Speech", partialSpokenText);
-                    if (resultListener != null){
-                        resultListener.onPartialResults(partialSpokenText);
-                    }
+//                    if (resultListener != null){
+//                        resultListener.onPartialResults(partialSpokenText);
+//                    }
                 }
 
             }
@@ -153,9 +137,4 @@ public class SpeechRecognitionFeature{
 
         return text;
     }
-
-//    public String getText(){
-//        Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
-//        return command;
-//    }
 }

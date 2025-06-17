@@ -12,25 +12,25 @@ import android.widget.Toast;
 import com.example.scrollease.databinding.FragmentBottomSheetBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment implements SpeechRecognitionFeature.SpeechResultListener {
+public class BottomSheetFragment extends BottomSheetDialogFragment {
 
-    @Override
-    public void onResults(String results) {
-    }
+//    @Override
+//    public void onResults(String results) {
+//    }
+//
+//    // TODO: The partial text is not being past on overrided onPartialResults
+//    @Override
+//    public void onPartialResults(String partialResults) {
+//        Log.d("Speech", "partial "+ partialResults);
+//        if (getActivity() != null){
+//
+//            getActivity().runOnUiThread(() ->
+//                    binding.textDisplay.setText(partialResults));
+//        }
+//    }
 
-    // TODO: The partial text is not being past on overrided onPartialResults
-    @Override
-    public void onPartialResults(String partialResults) {
-        Log.d("Speech", "partial "+ partialResults);
-        if (getActivity() != null){
 
-            getActivity().runOnUiThread(() ->
-                    binding.textDisplay.setText(partialResults));
-        }
-    }
-
-
-    private SpeechRecognitionFeature.SpeechRecognitionInterface listener;
+//    private SpeechRecognitionFeature.SpeechRecognitionInterface listener;
 
     private FragmentBottomSheetBinding binding;
 
@@ -38,7 +38,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Sp
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (SpeechRecognitionFeature.SpeechRecognitionInterface) context;
+//            listener = (SpeechRecognitionFeature.SpeechRecognitionInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context + " must implement SpeechRecognitionInterface");
         }
@@ -58,10 +58,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Sp
         });
 
         binding.SpeechRecognitionButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.startSpeechRecognition();
-                Log.d("Speech", "Clicked");
-            }
+//            if (listener != null) {
+//                listener.startSpeechRecognition();
+//                Log.d("Speech", "Clicked");
+//            }
         });
     }
 

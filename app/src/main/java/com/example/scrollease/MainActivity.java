@@ -1,15 +1,24 @@
 package com.example.scrollease;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.scrollease.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity implements SpeechRecognitionFeature.SpeechRecognitionInterface {
+public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
     private SpeechRecognitionFeature speechRecognitionFeature;
@@ -29,32 +38,55 @@ public class MainActivity extends AppCompatActivity implements SpeechRecognition
             return insets;
         });
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions
+                    (this,new String[]{Manifest.permission.RECORD_AUDIO},1);
+        }
+        else{
+            startSpeechService();
+        }
+
         // Replace findViewById with binding
-        binding.ToButtonFragment.setOnClickListener(v -> {
-            BottomSheetFragment bsf = new BottomSheetFragment();
-            bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
-        });
+//        binding.ToButtonFragment.setOnClickListener(v -> {
+//            BottomSheetFragment bsf = new BottomSheetFragment();
+//            bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
+//        });
 
-        NotificationFeature nf = new NotificationFeature();
-        nf.SRFPermission(this);
-
-        binding.notificationButton.setOnClickListener(v ->
-                nf.persistentNotification(MainActivity.this, v)
-        );
-
-        speechRecognitionFeature = new SpeechRecognitionFeature(this, null);
+        // TODO: Make a button to call speech service
+//        binding.notificationButton.setOnClickListener(v ->
+//                nf.persistentNotification(MainActivity.this, v)
+//        );
+//
+//        speechRecognitionFeature = new SpeechRecognitionFeature(this, null);
     }
 
     @Override
-    public void startSpeechRecognition() {
-        if (speechRecognitionFeature != null) {
-            speechRecognitionFeature.startSpeechRecognition();
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            startSpeechService();
+        }
+        else{
+            Log.d("Speech Permission", "Permission Denied");
         }
     }
 
-    public void setSpeechRecognitionListener(SpeechRecognitionFeature.SpeechResultListener listener){
-        speechRecognitionFeature.resultListener = listener;
+    private void startSpeechService(){
+        Intent serviceIntent = new Intent(this, SpeechRecognitionFeature.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
     }
+
+//    @Override
+//    public void startSpeechRecognition() {
+//        if (speechRecognitionFeature != null) {
+//            speechRecognitionFeature.startSpeechRecognition();
+//        }
+//    }
+
+//    public void setSpeechRecognitionListener(SpeechRecognitionFeature.SpeechResultListener listener){
+//        speechRecognitionFeature.resultListener = listener;
+//    }
 
     @Override
     protected void onDestroy() {
