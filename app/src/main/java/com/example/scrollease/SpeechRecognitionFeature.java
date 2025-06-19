@@ -9,7 +9,6 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Service;
 
@@ -17,8 +16,6 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-import com.example.scrollease.NotificationFeature;
 
 public class SpeechRecognitionFeature extends Service{
 
@@ -28,6 +25,13 @@ public class SpeechRecognitionFeature extends Service{
     private final String TRIGGER_WORD = "config";
     private boolean isListening = false;
     NotificationFeature notificationFeature = new NotificationFeature();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        this.context = this;
+        startSpeechRecognition();
+    }
 
     @Nullable
     @Override
@@ -40,7 +44,16 @@ public class SpeechRecognitionFeature extends Service{
         startForeground(1, notificationFeature.persistentNotification(this));
         return START_STICKY;
     }
-    // TODO: Add onCreate for lifecycle
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (speechRecognizer != null) {
+            speechRecognizer.destroy();
+        }
+    }
+
     public void startSpeechRecognition() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this.context);
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -51,16 +64,12 @@ public class SpeechRecognitionFeature extends Service{
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
             public void onReadyForSpeech(Bundle params) {}
-
             @Override
             public void onBeginningOfSpeech() {}
-
             @Override
             public void onRmsChanged(float rmsdB) {}
-
             @Override
             public void onBufferReceived(byte[] buffer) {}
-
             @Override
             public void onEndOfSpeech() {}
 
@@ -71,6 +80,8 @@ public class SpeechRecognitionFeature extends Service{
                 Log.e("Speech", "Error:" + errorMessage);
                 Toast.makeText(context.getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
 
+                isListening = false;
+//                new Handler().postDelayed(() -> startListening(), 500);
             }
 
             @Override
@@ -80,18 +91,8 @@ public class SpeechRecognitionFeature extends Service{
                     String spokenText = matches.get(0);
                     Log.d("Speech", "Result:" + spokenText);
 
-//                    if (spokenText != null){
-////                        if(spokenText.toLowerCase().contains(TRIGGER_WORD.toLowerCase())){
-////                            String command = extractCommand(spokenText);
-////                            Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
-////                        }
-////
-////                        else {
-////                            Log.d("Speech", "No trigger word found in: " + spokenText);
-////                        }
-//                        String command = extractCommand(spokenText);
-//                        Toast.makeText(context.getApplicationContext(), command, Toast.LENGTH_SHORT).show();
-//                    }
+                    isListening = false;
+//                    startListening();
                 }
 
             }
@@ -120,7 +121,7 @@ public class SpeechRecognitionFeature extends Service{
     }
 
     private void startListening(){
-        if (speechRecognizer != null && !isListening) {
+        if (speechRecognizer != null && isListening == false) {
             speechRecognizer.startListening(intent);
             isListening = true;
         }

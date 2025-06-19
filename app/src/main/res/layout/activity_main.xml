@@ -35,7 +35,7 @@
         app:layout_constraintVertical_bias="0.681">
 
         <Button
-            android:id="@+id/notificationButton"
+            android:id="@+id/startButton"
             android:layout_width="168dp"
             android:layout_height="103dp"
             android:text="Start"
@@ -48,19 +48,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/ToButtonFragment"
-            android:layout_width="168dp"
-            android:layout_height="103dp"
-            android:text="Bottom Fragment"
-            android:textAlignment="center"
-            android:textColorHighlight="#F03232"
-            android:textColorLink="#312929"
-            android:textDirection="locale"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

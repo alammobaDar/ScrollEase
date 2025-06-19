@@ -21,9 +21,6 @@ import com.example.scrollease.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
-    private SpeechRecognitionFeature speechRecognitionFeature;
-
-    private BottomSheetFragment bottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,28 +34,22 @@ public class MainActivity extends AppCompatActivity{
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        NotificationFeature notificationFeature = new NotificationFeature();
+        notificationFeature.persistentNotification(this);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions
-                    (this,new String[]{Manifest.permission.RECORD_AUDIO},1);
-        }
-        else{
-            startSpeechService();
-        }
 
-        // Replace findViewById with binding
-//        binding.ToButtonFragment.setOnClickListener(v -> {
-//            BottomSheetFragment bsf = new BottomSheetFragment();
-//            bsf.show(getSupportFragmentManager(), "Bottom Sheet Fragment");
-//        });
+//         TODO: Make a button to call speech service
+        binding.startButton.setOnClickListener(v -> {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions
+                            (this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                } else {
+                    startSpeechService();
+                }
+            }
+        );
 
-        // TODO: Make a button to call speech service
-//        binding.notificationButton.setOnClickListener(v ->
-//                nf.persistentNotification(MainActivity.this, v)
-//        );
-//
-//        speechRecognitionFeature = new SpeechRecognitionFeature(this, null);
     }
 
     @Override
@@ -76,17 +67,6 @@ public class MainActivity extends AppCompatActivity{
         Intent serviceIntent = new Intent(this, SpeechRecognitionFeature.class);
         ContextCompat.startForegroundService(this, serviceIntent);
     }
-
-//    @Override
-//    public void startSpeechRecognition() {
-//        if (speechRecognitionFeature != null) {
-//            speechRecognitionFeature.startSpeechRecognition();
-//        }
-//    }
-
-//    public void setSpeechRecognitionListener(SpeechRecognitionFeature.SpeechResultListener listener){
-//        speechRecognitionFeature.resultListener = listener;
-//    }
 
     @Override
     protected void onDestroy() {

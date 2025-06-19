@@ -18,15 +18,14 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 public class NotificationFeature {
-    public static final String CHANNEL_ID =  "Darren_id";
+    public static final String CHANNEL_ID =  "ScrollEase";
     public Notification persistentNotification(@NonNull Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED){
-                if (context instanceof Activity){
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
-                }
-            }
+            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 2);
+
+
 
             CharSequence name = context.getString(R.string.app_name);
             String description = context.getString(R.string.app_description);
@@ -48,15 +47,4 @@ public class NotificationFeature {
                 .build();
     }
 
-    public void SRFPermission(@NonNull Context context){
-        // this requests user's permission if the app can use the device's mic
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions
-                    ((Activity) context,new String[]{Manifest.permission.RECORD_AUDIO},1);
-        }
-        else{
-
-        }
-    }
 }
