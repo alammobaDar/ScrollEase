@@ -12,35 +12,21 @@ import android.widget.Toast;
 import com.example.scrollease.databinding.FragmentBottomSheetBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment implements SpeechRecognitionFeature.SpeechResultListener {
-
-    @Override
-    public void onResults(String results) {
-    }
+public class BottomSheetFragment extends BottomSheetDialogFragment {
 
 
-    @Override
-    public void onPartialResults(String partialResults) {
-        if (getActivity() != null){
-            getActivity().runOnUiThread(() ->
-                    binding.textDisplay.setText(partialResults));
-            Log.d("Speech", "partial "+ partialResults);
-        }
-    }
-
-
-    private SpeechRecognitionFeature.SpeechRecognitionInterface listener;
+//    private SpeechRecognitionFeature.SpeechRecognitionInterface listener;
 
     private FragmentBottomSheetBinding binding;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        try {
-            listener = (SpeechRecognitionFeature.SpeechRecognitionInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context + " must implement SpeechRecognitionInterface");
-        }
+//        try {
+//            listener = (SpeechRecognitionFeature.SpeechRecognitionInterface) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context + " must implement SpeechRecognitionInterface");
+//        }
     }
 
     @Override
@@ -57,10 +43,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Sp
         });
 
         binding.SpeechRecognitionButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.startSpeechRecognition();
-                Log.d("Speech", "Clicked");
-            }
+//            if (listener != null) {
+//                listener.startSpeechRecognition();
+//                Log.d("Speech", "Clicked");
+//            }
         });
     }
 
