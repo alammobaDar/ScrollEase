@@ -15,7 +15,12 @@ import android.app.Service;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SpeechRecognitionFeature extends Service{
 
@@ -36,7 +41,7 @@ public class SpeechRecognitionFeature extends Service{
 
     // TODO: add condition to OnResult that if the word is not yet Triggered, return Nothing
     // TODO: add condition on OnPartialResult if the TW has been said, then update current state
-    // TODO: after that, add the extract commands on OnResult to detect activate commands
+    // TODO: after that, add the extract commands on OnResult to activate commands
 
     @Override
     public void onCreate() {
@@ -109,7 +114,9 @@ public class SpeechRecognitionFeature extends Service{
                     Log.d("Speech", "Result:" + spokenText);
 
                     if (spokenText.toLowerCase().contains(TRIGGER_WORD)){
-                        extractCommand(spokenText);
+                        String command = extractCommand(spokenText);
+
+                        Log.d("Speech", "Command: "+ command);
                     }
 
                     currentState = STATE_IDLE;
@@ -158,8 +165,26 @@ public class SpeechRecognitionFeature extends Service{
         }
     }
 
-    private String extractCommand(String text){
+    private String extractCommand(String text) {
+        // after the word config, it will only process 2 next word
+        String[] arr_text = text.split("\\s+");
+//        boolean isTW = Arrays.asList(arr_text).contains(TRIGGER_WORD);
 
-        return text;
+        int index = -1;
+        StringBuilder command = new StringBuilder();
+        for (int i = 0; i < arr_text.length; i++){
+            if (Objects.equals(arr_text[i], TRIGGER_WORD)){
+                index = i;
+                break;
+
+            }
+        }
+        for (int i = index+1; i < arr_text.length; i++){
+            command.append(" ").append(arr_text[i]);
+        }
+
+
+
+        return command.toString().strip();
     }
 }
