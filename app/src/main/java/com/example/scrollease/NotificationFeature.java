@@ -44,6 +44,7 @@ public class NotificationFeature {
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("A Simple Scrolling App that can help you scroll if you are handicapped"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setOngoing(true)
                 .build();
     }
 

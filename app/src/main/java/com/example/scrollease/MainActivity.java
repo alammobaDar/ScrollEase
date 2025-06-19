@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity{
         NotificationFeature notificationFeature = new NotificationFeature();
         notificationFeature.persistentNotification(this);
 
-
-//         TODO: Make a button to call speech service
         binding.startButton.setOnClickListener(v -> {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                         != PackageManager.PERMISSION_GRANTED) {

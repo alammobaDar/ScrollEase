@@ -26,6 +26,18 @@ public class SpeechRecognitionFeature extends Service{
     private boolean isListening = false;
     NotificationFeature notificationFeature = new NotificationFeature();
 
+    // TODO: Make a state machine flow
+
+    private final int STATE_IDLE = 0;
+    private final int STATE_LISTENING = 1;
+    private final int STATE_TRIGGERED = 2;
+
+    private int currentState = STATE_IDLE;
+
+    // TODO: add condition to OnResult that if the word is not yet Triggered, return Nothing
+    // TODO: add condition on OnPartialResult if the TW has been said, then update current state
+    // TODO: after that, add the extract commands on OnResult to detect activate commands
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,7 +50,6 @@ public class SpeechRecognitionFeature extends Service{
     public IBinder onBind(Intent intent) {
         return null;
     }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         startForeground(1, notificationFeature.persistentNotification(this));
@@ -78,23 +89,32 @@ public class SpeechRecognitionFeature extends Service{
                 SpeechRecognizerErrorHandler speechErrorHandler = new SpeechRecognizerErrorHandler();
                 String errorMessage = speechErrorHandler.getErrorText(error);
                 Log.e("Speech", "Error:" + errorMessage);
-                Toast.makeText(context.getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context.getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
 
-                isListening = false;
-//                new Handler().postDelayed(() -> startListening(), 500);
+                currentState = STATE_IDLE;
+                new Handler().postDelayed(() -> startListening(), 500);
             }
 
             @Override
             public void onResults(Bundle results) {
+                if (currentState != STATE_TRIGGERED){
+                    currentState = STATE_IDLE;
+                    startListening();
+                    return;
+                }
+
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null && !matches.isEmpty()){
                     String spokenText = matches.get(0);
                     Log.d("Speech", "Result:" + spokenText);
 
-                    isListening = false;
-//                    startListening();
-                }
+                    if (spokenText.toLowerCase().contains(TRIGGER_WORD)){
+                        extractCommand(spokenText);
+                    }
 
+                    currentState = STATE_IDLE;
+                    new Handler().postDelayed(() -> startListening(), 500);
+                }
             }
 
             @Override
@@ -104,9 +124,12 @@ public class SpeechRecognitionFeature extends Service{
                     String partialSpokenText = match.get(0).toLowerCase();
 
                     Log.d("Speech", partialSpokenText);
-//                    if (resultListener != null){
-//                        resultListener.onPartialResults(partialSpokenText);
-//                    }
+                    if (partialSpokenText.toLowerCase().contains(TRIGGER_WORD) && currentState == STATE_LISTENING){
+                        currentState = STATE_TRIGGERED;
+                        Log.d("Speech", "Trigger word");
+
+//                        stopListening();
+                    }
                 }
 
             }
@@ -117,20 +140,21 @@ public class SpeechRecognitionFeature extends Service{
             }
         });
 
+
         startListening();
+
     }
 
     private void startListening(){
-        if (speechRecognizer != null && isListening == false) {
+        if (speechRecognizer != null && currentState == STATE_IDLE) {
+            currentState = STATE_LISTENING;
             speechRecognizer.startListening(intent);
-            isListening = true;
         }
     }
 
     private void stopListening(){
         if(isListening){
             speechRecognizer.stopListening();
-            isListening = false;
         }
     }
 
