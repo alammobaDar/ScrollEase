@@ -9,18 +9,14 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.widget.Toast;
 import android.app.Service;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Locale;
 import java.util.Objects;
-import java.util.OptionalInt;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class SpeechRecognitionFeature extends Service{
 
@@ -31,16 +27,12 @@ public class SpeechRecognitionFeature extends Service{
     private boolean isListening = false;
     NotificationFeature notificationFeature = new NotificationFeature();
 
-    // TODO: Make a state machine flow
-
     private final int STATE_IDLE = 0;
     private final int STATE_LISTENING = 1;
     private final int STATE_TRIGGERED = 2;
 
     private int currentState = STATE_IDLE;
 
-    // TODO: add condition to OnResult that if the word is not yet Triggered, return Nothing
-    // TODO: add condition on OnPartialResult if the TW has been said, then update current state
     // TODO: after that, add the extract commands on OnResult to activate commands
 
     @Override
@@ -123,7 +115,8 @@ public class SpeechRecognitionFeature extends Service{
                     new Handler().postDelayed(() -> startListening(), 500);
                 }
             }
-
+            // TODO: Add the gesture commands
+            // TODO: Modify the bottomsheet UI, make it minimal and transparent
             @Override
             public void onPartialResults(Bundle partialResults) {
                 ArrayList<String> match = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
@@ -134,6 +127,9 @@ public class SpeechRecognitionFeature extends Service{
                     if (partialSpokenText.toLowerCase().contains(TRIGGER_WORD) && currentState == STATE_LISTENING){
                         currentState = STATE_TRIGGERED;
                         Log.d("Speech", "Trigger word");
+                        Intent bsfIntent = new Intent(getApplicationContext(), OverlayActivity.class);
+                        bsfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(bsfIntent);
 
 //                        stopListening();
                     }
@@ -168,22 +164,18 @@ public class SpeechRecognitionFeature extends Service{
     private String extractCommand(String text) {
         // after the word config, it will only process 2 next word
         String[] arr_text = text.split("\\s+");
-//        boolean isTW = Arrays.asList(arr_text).contains(TRIGGER_WORD);
-
         int index = -1;
         StringBuilder command = new StringBuilder();
+
         for (int i = 0; i < arr_text.length; i++){
             if (Objects.equals(arr_text[i], TRIGGER_WORD)){
                 index = i;
-                break;
-
+//                break;
             }
         }
         for (int i = index+1; i < arr_text.length; i++){
             command.append(" ").append(arr_text[i]);
         }
-
-
 
         return command.toString().strip();
     }
