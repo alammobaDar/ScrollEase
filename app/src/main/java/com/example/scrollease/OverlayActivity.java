@@ -25,8 +25,19 @@ public class OverlayActivity extends AppCompatActivity {
 
         BottomSheetFragment bottomSheetFragment =  new BottomSheetFragment();
 
+        // pass the data from getCommandText to BSF
+        Bundle args = new Bundle();
+        args.putString("command", getIntent().getStringExtra("command"));
+        bottomSheetFragment.setArguments(args);
+
         bottomSheetFragment.show(getSupportFragmentManager(), "BottomSheet");
 
+
+        // TODO: this is risky because the BSF is still null,
+        //  this can be solve if i just put this into the bsf itself
+        //  and then do this to bsf onDismiss(); to dismiss the activity itself (OverlayActivity).
+        //  After that, we can remove this
+        // ensure to dismiss the overlay activity as the bsf is finished, also ensure bsf is not null.
         Objects.requireNonNull(bottomSheetFragment.getDialog()).setOnDismissListener(dialog -> finish());
     }
 }

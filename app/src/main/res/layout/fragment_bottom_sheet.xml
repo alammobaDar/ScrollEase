@@ -11,14 +11,6 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:textSize="20sp"
-        android:textColor="#1cc3f0"
-        android:textAlignment="center"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Ease your Scrolling" />
-
-    <TextView
         android:id="@+id/textDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,18 +20,6 @@
         android:text="Say something..."
         android:textAlignment="center"
         android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/SpeechRecognitionButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Speech"/>
-
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Back" />
 
 
 </LinearLayout>

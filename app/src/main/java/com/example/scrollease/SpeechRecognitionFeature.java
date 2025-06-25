@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -24,6 +25,7 @@ public class SpeechRecognitionFeature extends Service{
     private SpeechRecognizer speechRecognizer;
     private Intent intent;
     private final String TRIGGER_WORD = "config";
+    String commandText;
     private boolean isListening = false;
     NotificationFeature notificationFeature = new NotificationFeature();
 
@@ -39,6 +41,7 @@ public class SpeechRecognitionFeature extends Service{
     public void onCreate() {
         super.onCreate();
         this.context = this;
+        this.commandText = null;
         startSpeechRecognition();
     }
 
@@ -53,7 +56,7 @@ public class SpeechRecognitionFeature extends Service{
         return START_STICKY;
     }
 
-
+    // TODO: need to modify, must make it destroy the old then replace it by new recognizer
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -89,7 +92,7 @@ public class SpeechRecognitionFeature extends Service{
 //                Toast.makeText(context.getApplicationContext(), "Error:" + errorMessage, Toast.LENGTH_SHORT).show();
 
                 currentState = STATE_IDLE;
-                new Handler().postDelayed(() -> startListening(), 500);
+                new Handler().postDelayed(() -> startListening(), 1000);
             }
 
             @Override
@@ -112,7 +115,7 @@ public class SpeechRecognitionFeature extends Service{
                     }
 
                     currentState = STATE_IDLE;
-                    new Handler().postDelayed(() -> startListening(), 500);
+                    new Handler().postDelayed(() -> startListening(), 1000);
                 }
             }
             // TODO: Add the gesture commands
@@ -127,9 +130,24 @@ public class SpeechRecognitionFeature extends Service{
                     if (partialSpokenText.toLowerCase().contains(TRIGGER_WORD) && currentState == STATE_LISTENING){
                         currentState = STATE_TRIGGERED;
                         Log.d("Speech", "Trigger word");
-                        Intent bsfIntent = new Intent(getApplicationContext(), OverlayActivity.class);
-                        bsfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(bsfIntent);
+
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            // requesting Overlay Activity to call bottom sheet fragment
+                            Intent bsfIntent = new Intent(getApplicationContext(), OverlayActivity.class);
+                            bsfIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            // TODO: the getCommandText is null, because extract command is yet to be called.
+                            //  could just put this intent into on Results.
+                            //  or modify getCommandText to ensure it is not null
+                            // pass getter method of commandText via Bundle
+                            // Bundle is just like a Hash map Holder which passes key-value data safely from component to component as an argument
+                            bsfIntent.putExtra("command", getCommandText());
+//                        Log.d("Tests", "put Extra is Working");
+                            startActivity(bsfIntent);
+//                        Log.d("Tests", "StartActivity is Working");
+                        }, 200);
+
+
 
 //                        stopListening();
                     }
@@ -147,7 +165,6 @@ public class SpeechRecognitionFeature extends Service{
         startListening();
 
     }
-
     private void startListening(){
         if (speechRecognizer != null && currentState == STATE_IDLE) {
             currentState = STATE_LISTENING;
@@ -162,21 +179,30 @@ public class SpeechRecognitionFeature extends Service{
     }
 
     private String extractCommand(String text) {
-        // after the word config, it will only process 2 next word
+        // it will extract the command after the trigger word.
         String[] arr_text = text.split("\\s+");
         int index = -1;
         StringBuilder command = new StringBuilder();
 
+        // search for the index of the recent trigger word inside the String Array
         for (int i = 0; i < arr_text.length; i++){
             if (Objects.equals(arr_text[i], TRIGGER_WORD)){
                 index = i;
 //                break;
             }
         }
+        // extract the commands
         for (int i = index+1; i < arr_text.length; i++){
             command.append(" ").append(arr_text[i]);
         }
 
-        return command.toString().strip();
+        this.commandText = command.toString().strip();
+
+        return commandText;
+    }
+
+    public String getCommandText(){
+        Log.d("Command", commandText != null ? commandText : "null");
+        return commandText;
     }
 }
